@@ -1,0 +1,480 @@
+﻿@page "/flights"
+
+@using app.Components.Pages.coding;
+@using System.Text;
+
+
+<style>
+    /* Apply box-sizing border-box to all elements for consistent box model */
+    * {
+        box-sizing: border-box;
+    }
+
+    /* Define styles for columns */
+    .column {
+        float: left; /* Float left to create a grid layout */
+        width: 50%; /* Each column takes up 50% of the container */
+        padding: 10px; /* Add padding to the columns */
+        height: 350px; /* Set a fixed height for the columns */
+    }
+
+    /* Clear floats after rows */
+    .row:after {
+        content: ""; /* Clear content */
+        display: table; /* Set display to table to trigger clearfix */
+        clear: both; /* Clear floats */
+    }
+
+    /* Additional clearfix for ColumnB */
+    .ColumnB {
+        content: ""; /* Clear content */
+        display: table; /* Set display to table to trigger clearfix */
+        clear: both; /* Clear floats */
+    }
+
+    /* Styles for properties within 'myself' class */
+    .myself .property {
+        width: 25%; /* Set width to 25% */
+        display: inline-block; /* Display as inline-block to allow for inline layout */
+        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        text-align: right; /* Align text to the right */
+    }
+
+    /* Styles for values within 'myself' class */
+    .myself .value {
+        text-align: left; /* Align text to the left */
+        padding-left: 10px; /* Add left padding */
+        width: 70%; /* Set width to 70% */
+        display: inline-block; /* Display as inline-block */
+        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    }
+
+    /* Define a container with relative positioning */
+    .container {
+        position: relative;
+    }
+
+    /* Center-align content within the container */
+    .center {
+        position: absolute; /* Position absolutely within the container */
+        left: 50%; /* Move to the center horizontally */
+    }
+
+    /* Styles for columnC */
+    .columnC {
+        float: left; /* Float left */
+        width: 100%; /* Take up 100% of the container width */
+        padding: 10px; /* Add padding */
+        height: 150px; /* Set height */
+        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    }
+
+    /* Styles for columnB */
+    .columnB {
+        clear: both; /* Clear both left and right floats */
+        width: 100%; /* Take up 100% of the container width */
+        padding: 10px; /* Add padding */
+        height: 150px; /* Set height */
+        margin-top: 450px; /* Add top margin */
+    }
+
+    /* Styles for columnD */
+    .columnD {
+        clear: both; /* Clear both left and right floats */
+        width: 100%; /* Take up 100% of the container width */
+        padding-top: 130px; /* Add padding to the top */
+        height: 350px; /* Set height */
+    }
+
+    /* Styles for valueC within 'myself' class */
+    .myself .valueC {
+        text-align: left; /* Align text to the left */
+        padding-left: 10px; /* Add left padding */
+        width: 70%; /* Set width to 70% */
+        display: inline-block; /* Display as inline-block */
+        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    }
+
+    /* Styles for propertyC within 'myself' class */
+    .myself .propertyC {
+        width: 25%; /* Set width to 25% */
+        display: inline-block; /* Display as inline-block */
+        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        text-align: right; /* Align text to the right */
+    }
+
+    /* Styles for form controls */
+    .form-control {
+        width: 100%; /* Take up 100% of the container width */
+    }
+
+    /* Styles for button1 */
+    .button1 {
+        width: 300px; /* Set width to 300px */
+    }
+
+</style>
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div style="color: red;">
+        @errorMessage
+    </div>
+}
+
+<div class="row">
+    <div class="columnC myself">
+        <div class="row">
+            <div class="center">
+                <h3>Flight Finder</h3>
+            </div>
+        </div>
+
+        <br /><br />
+
+        <div class="row">
+            <div class="col-sm-3">
+                <label for="explicit-label-name">From: </label>
+                <select class="form-control" @bind="fromValue">
+                    <option value="@FlightManager.WEEKDAY_ANY">@FlightManager.WEEKDAY_ANY</option>
+                    @if (airports == null)
+                    {
+                        <option>Loading...</option>
+                    }
+                    else
+                    {
+                        @foreach (var a in airports)
+                        {
+                            <option value=@a>@a</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <label for="explicit-label-name">To: </label>
+                <select class="form-control" @bind="toValue">
+                    <option value="Any">@FlightManager.WEEKDAY_ANY</option>
+                    @if (airports == null)
+                    {
+                        <option>Loading...</option>
+                    }
+                    else
+                    {
+                        @foreach (var a in airports)
+                        {
+                            <option value=@a>@a</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <label for="explicit-label-name">Day: </label>
+                <select class="form-control" @bind="dayValue">
+                    <option value="@FlightManager.WEEKDAY_ANY">@FlightManager.WEEKDAY_ANY</option>
+                    <option value="@FlightManager.WEEKDAY_SUNDAY">@FlightManager.WEEKDAY_SUNDAY</option>
+                    <option value="@FlightManager.WEEKDAY_MONDAY">@FlightManager.WEEKDAY_MONDAY</option>
+                    <option value="@FlightManager.WEEKDAY_TUESDAY">@FlightManager.WEEKDAY_TUESDAY</option>
+                    <option value="@FlightManager.WEEKDAY_WEDNESDAY">@FlightManager.WEEKDAY_WEDNESDAY</option>
+                    <option value="@FlightManager.WEEKDAY_THURSDAY">@FlightManager.WEEKDAY_THURSDAY</option>
+                    <option value="@FlightManager.WEEKDAY_FRIDAY">@FlightManager.WEEKDAY_FRIDAY</option>
+                    <option value="@FlightManager.WEEKDAY_SATURDAY">@FlightManager.WEEKDAY_SATURDAY</option>
+                </select>
+            </div>
+            <div class="col-sm-3">
+                <label for="explicit-label-name"> </label>
+                <button class="btn btn-primary form-control" @onclick="@FlightFinder">Find Flights</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="columnC myself">
+        <div class="row ">
+            <div class="center">
+                <h3>Flights</h3>
+            </div>
+        </div>
+
+        <br /><br />
+        <select class="form-control" @onchange="@fillForm">
+            @if (flights == null)
+            {
+                <option>Not available</option>
+            }
+            else
+            {
+                <option>
+                    Loading.....
+
+                </option>
+                @foreach (var f in flights)
+                {
+                    <option value=@f.Code>@f.Code , @f.Airline, @f.Airline, @f.From, @f.To, @f.Weekday, @f.Time, @f.CostPerSeat</option>
+                }
+            }
+        </select>
+    </div>
+</div>
+<div class="row">
+    <div class="center">
+        <h3>Reserve</h3>
+    </div>
+</div>
+
+<br />
+<div>
+    <label>Flight code:</label> <input class="form-control" type="text" placeholder="Flight" value="@newFlightCode">
+    <label>Airline:</label><input class="form-control" type="text" placeholder="Airline" value="@newairline">
+    <label>Day:</label> <input class="form-control" type="text" placeholder="Day" value="@newweekday">
+    <label>Time:</label> <input class="form-control" type="text" placeholder="Time" value="@newtime">
+    <label>Cost:</label> <input class="form-control" type="text" placeholder="Cost" value="@newcostPerSeat">
+
+    <!-- Add "required" attribute here for Name field -->
+    <label>Name:</label> <input id="nameInput" class="form-control" type="text" placeholder="Name" @bind="newName" required />
+
+    <!-- Add "required" attribute here for Citizenship field -->
+    <label>Citizenship:</label><input id="citizenshipInput" class="form-control" type="text" placeholder="Citizenship" @bind="newCitizenship" required />
+
+</div>
+<br />
+<br />
+
+<div class="row">
+    <div class="center">
+        <!-- Add type="submit" to ensure proper form submission -->
+        <button id="reserveButton" type="submit" class="btn btn-primary button1" @onclick="CallMakeReservation" disabled>Reserve</button>
+        <br /> <br />
+        <!-- Add a form tag to encapsulate the form elements -->
+        <form>
+            <!-- Add a <p> tag inside the form to display the Reservation Code -->
+            <p id="c" role="status" value="@newReservationCode">Reservation Code: @newReservationCode</p>
+        </form>
+        <br />
+        <br />
+    </div>
+</div>
+
+<script>
+    // JavaScript to enable/disable submit button based on Name and Citizenship fields
+    const nameInput = document.getElementById('nameInput');
+    const citizenshipInput = document.getElementById('citizenshipInput');
+    const reserveButton = document.getElementById('reserveButton');
+
+    // Add event listeners to Name and Citizenship inputs
+    nameInput.addEventListener('input', toggleSubmitButton);
+    citizenshipInput.addEventListener('input', toggleSubmitButton);
+
+    function toggleSubmitButton() {
+        // Enable/disable submit button based on whether Name and Citizenship fields are filled
+        if (nameInput.value.trim() !== '' && citizenshipInput.value.trim() !== '') {
+            reserveButton.disabled = false;
+        } else {
+            reserveButton.disabled = true;
+        }
+    }
+</script>
+
+
+<br />
+<br />
+<br />
+<div class="row">
+    <div class="columnC myself">
+        <div class="row">
+            <div class="center">
+                <h3>Search</h3>
+            </div>
+        </div>
+        <br />
+        <div>
+            <label>Code: </label><input class="form-control" type="text" id="code" name="code" @bind="inputResCode">
+            <label>Airline: </label><input class="form-control" type="text" id="airline" name="airline" @bind="inputAirline">
+            <label> Name: </label><input class="form-control" type="text" id="name" name="name" @bind="inputName">
+            <br />
+
+            <div class="row">
+                <div class="center">
+                    <button class="btn btn-primary" @onclick="SearchReservations">Find Reservations</button>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <div class="row">
+            <div class="center">
+                <h3>Your Reservations</h3>
+            </div>
+        </div>
+        <br />
+        <br />
+        <select class="form-control" onfocus="this.selectedIndex = -1;" @bind="currentReservation">
+            <option value=" " selected></option>
+            @if (resNew.Count() == 0)
+            {
+                <option>Loading...</option>
+            }
+            else
+            {
+                @foreach (var res in resNew)
+                {
+                    <option value="@res.Code"> @res.Code,@res.FlightCode,@res.Airline,@res.Cost,@res.Name,@res.Citizenship,@res.Active </option>
+                }
+            }
+        </select>
+
+        <br />
+
+    </div>
+</div>
+
+
+@code {
+
+    //string flightCode;
+    static string newFlightCode;
+    string newairline;
+    string newfrom;
+    string newto;
+    string newweekday;
+    string newtime;
+    double newcostPerSeat;
+    string newName;
+    string newCitizenship;
+    string reservationCode;
+    string errorMessage = "";
+    string newReservationCode = "";
+
+    FlightManager fm = new FlightManager();
+    List<Flight> flights = new List<Flight>();
+    List<string> airports = FlightManager.airports;
+
+    Flight flight;
+    string a;
+    string fromValue;
+    string toValue;
+    string dayValue;
+    private void FlightFinder()
+    {
+        ClearErrorMessage();
+        newFlightCode = "";
+        newairline = "";
+        newfrom = "";
+        newto = "";
+        newweekday = "";
+        newtime = "";
+        newcostPerSeat = 0;
+        newName = "";
+        newCitizenship = "";
+        if (fromValue == null)
+        {
+            fromValue = FlightManager.WEEKDAY_ANY;
+        }
+        if (toValue == null)
+        {
+            toValue = FlightManager.WEEKDAY_ANY;
+        }
+        if (dayValue == null)
+        {
+            dayValue = FlightManager.WEEKDAY_ANY;
+        }
+        flights = FlightManager.findFlights(fromValue, toValue, dayValue);
+    }
+
+    private void fillForm(ChangeEventArgs e)
+    {
+        ClearErrorMessage();
+        newFlightCode = e.Value.ToString();
+        flight = FlightManager.findFlightByCode(newFlightCode);
+        newairline = flight.Airline;
+        newfrom = flight.From;
+        newto = flight.To;
+        newweekday = flight.Weekday;
+        newtime = flight.Time;
+        newcostPerSeat = flight.CostPerSeat;
+    }
+
+    //This function creates the reservation and adds it in the csv file.
+    private void CallMakeReservation()
+    {
+        ClearErrorMessage();
+        ReservationManager rm = new ReservationManager();
+        try
+        {
+            if (newFlightCode != null)
+            {
+                newReservationCode = rm.GenerateResCode();
+                var reservation = new Reservation(newReservationCode, newFlightCode, newairline, newcostPerSeat, newName, newCitizenship, "Active");
+                rm.AddReservation(reservation);
+            }
+            else
+            {
+                errorMessage = "An error has occurred. Please try again.";
+            }
+        }
+        catch (Exception e)
+        {
+            errorMessage = e.Message;
+        }
+    }
+
+    private void ClearErrorMessage()
+    {
+        errorMessage = "";
+    }
+    string inputResCode = "";
+    string inputAirline = "";
+    string inputName = "";
+    string currentReservation;
+
+    ReservationManager rm = new ReservationManager();
+    List<Reservation> reservations;
+    List<Reservation> resNew = new List<Reservation>();
+
+
+    private void SearchReservations()
+    {
+        reservations = ReservationManager.GetReservations();
+        resNew.Clear();
+        Reservation NewReservation;
+
+        if ((inputResCode != "") || (inputAirline != "") || (inputName != ""))
+        {
+            foreach (var res in reservations)
+            {
+                if (((inputResCode != "") && (inputResCode.ToUpper() == res.Code.ToUpper())) &&
+                ((inputAirline != "") && (inputAirline.ToUpper() == res.Airline.ToUpper())) &&
+                ((inputName != "") && (inputName.ToUpper() == res.Name.ToUpper())))
+                {
+                    NewReservation = new Reservation(res.Code, res.FlightCode, res.Airline, res.Cost, res.Name, res.Citizenship, res.Active);
+                    resNew.Add(NewReservation);
+                }
+
+                else if ((inputResCode != "") && (inputResCode.ToUpper() == res.Code.ToUpper()))
+                {
+                    NewReservation = new Reservation(res.Code, res.FlightCode, res.Airline, res.Cost, res.Name, res.Citizenship, res.Active);
+                    resNew.Add(NewReservation);
+                }
+
+                else if ((inputAirline != "") && (inputAirline.ToUpper() == res.Airline.ToUpper()))
+                {
+                    NewReservation = new Reservation(res.Code, res.FlightCode, res.Airline, res.Cost, res.Name, res.Citizenship, res.Active);
+                    resNew.Add(NewReservation);
+                }
+
+                else if ((inputName != "") && (inputName.ToUpper() == res.Name.ToUpper()))
+                {
+                    NewReservation = new Reservation(res.Code, res.FlightCode, res.Airline, res.Cost, res.Name, res.Citizenship, res.Active);
+                    resNew.Add(NewReservation);
+                }
+
+
+            }
+        }
+        else
+        {
+            resNew = reservations;
+        }
+    }
+
+}
